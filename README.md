@@ -2,6 +2,9 @@
 
 Steer LLM behavior with extracted persona vectors. This system extracts activation patterns from an LLM when it embodies different personas, then uses those patterns to steer the model's behavior at runtime.
 
+<img width="2718" height="1436" alt="image" src="https://github.com/user-attachments/assets/3ef262b5-cfd2-4203-8c88-78a0b3878d5e" />
+
+
 ## Features
 
 - **Persona Vector Extraction**: Extract characteristic activation patterns from any persona defined by system prompts
