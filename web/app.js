@@ -9,12 +9,16 @@
 
 const state = {
     personas: [],
+    traits: [],
     activePersonas: {}, // name -> weight (0-100)
+    activeTraits: {},   // name -> weight (0-100)
     modelLoaded: false,
     creatingPersona: null,
+    creatingTrait: null,
     ws: null,
     currentResponse: '',
     steeringScale: 0.1,
+    currentTab: 'personas', // 'personas' or 'traits'
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -29,6 +33,15 @@ const elements = {
     // Personas
     personaList: document.getElementById('persona-list'),
     createPersonaBtn: document.getElementById('create-persona-btn'),
+    
+    // Traits
+    traitList: document.getElementById('trait-list'),
+    createTraitBtn: document.getElementById('create-trait-btn'),
+    
+    // Tabs
+    subTabs: document.querySelectorAll('.sub-tab'),
+    personasTab: document.getElementById('personas-tab'),
+    traitsTab: document.getElementById('traits-tab'),
     
     // Chat
     chatMessages: document.getElementById('chat-messages'),
@@ -47,7 +60,7 @@ const elements = {
     // New Chat
     newChatBtn: document.getElementById('new-chat-btn'),
     
-    // Modal
+    // Persona Modal
     createModal: document.getElementById('create-modal'),
     personaName: document.getElementById('persona-name'),
     personaDescription: document.getElementById('persona-description'),
@@ -57,6 +70,15 @@ const elements = {
     personaUseJudge: document.getElementById('persona-use-judge'),
     modalCancel: document.getElementById('modal-cancel'),
     modalCreate: document.getElementById('modal-create'),
+    
+    // Trait Modal
+    createTraitModal: document.getElementById('create-trait-modal'),
+    traitWord: document.getElementById('trait-word'),
+    traitOpposite: document.getElementById('trait-opposite'),
+    traitQuestions: document.getElementById('trait-questions'),
+    traitBatch: document.getElementById('trait-batch'),
+    traitModalCancel: document.getElementById('trait-modal-cancel'),
+    traitModalCreate: document.getElementById('trait-modal-create'),
     
     // Loading
     loadingOverlay: document.getElementById('loading-overlay'),
@@ -74,6 +96,7 @@ async function fetchStatus() {
         
         state.modelLoaded = data.model_loaded;
         state.creatingPersona = data.creating_persona;
+        state.creatingTrait = data.creating_trait;
         state.steeringScale = data.steering_scale || 0.1;
         
         // Update status displays
@@ -85,9 +108,11 @@ async function fetchStatus() {
         // Update steering scale display
         updateSteeringScaleDisplay();
         
-        // Show creating persona status
+        // Show creating persona/trait status
         if (data.creating_persona) {
             showLoading(`Creating persona: ${data.creating_persona}...`);
+        } else if (data.creating_trait) {
+            showLoading(`Extracting trait: ${data.creating_trait}...`);
         }
         
         return data;
@@ -128,6 +153,55 @@ async function fetchPersonas() {
         renderPersonaList();
     } catch (error) {
         console.error('Failed to fetch personas:', error);
+    }
+}
+
+async function fetchTraits() {
+    try {
+        const response = await fetch('/api/traits');
+        state.traits = await response.json();
+        renderTraitList();
+    } catch (error) {
+        console.error('Failed to fetch traits:', error);
+    }
+}
+
+async function createTrait(word, opposite, numQuestions, batchSize) {
+    try {
+        const response = await fetch('/api/traits', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                word,
+                opposite: opposite || null,
+                num_questions: numQuestions,
+                batch_size: batchSize,
+            }),
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Failed to create trait');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Failed to create trait:', error);
+        throw error;
+    }
+}
+
+async function deleteTrait(name) {
+    try {
+        const response = await fetch(`/api/traits/${name}`, { method: 'DELETE' });
+        if (response.ok) {
+            await fetchTraits();
+            // Remove from active if present
+            delete state.activeTraits[name];
+            renderMixer();
+        }
+    } catch (error) {
+        console.error('Failed to delete trait:', error);
     }
 }
 
@@ -194,6 +268,7 @@ async function deletePersona(name) {
 
 async function sendMessage(message) {
     const personas = {};
+    const traits = {};
     
     // Include all non-zero personas (positive or negative)
     for (const [name, weight] of Object.entries(state.activePersonas)) {
@@ -202,11 +277,19 @@ async function sendMessage(message) {
         }
     }
     
+    // Include all non-zero traits (positive or negative)
+    for (const [name, weight] of Object.entries(state.activeTraits)) {
+        if (weight !== 0) {
+            traits[name] = weight / 100;
+        }
+    }
+    
     // Use WebSocket if available
     if (state.ws && state.ws.readyState === WebSocket.OPEN) {
         state.ws.send(JSON.stringify({
             message,
             personas,
+            traits,
         }));
         return;
     }
@@ -219,6 +302,7 @@ async function sendMessage(message) {
             body: JSON.stringify({
                 message,
                 personas,
+                traits,
             }),
         });
         
@@ -332,46 +416,115 @@ function renderPersonaList() {
     });
 }
 
-function renderMixer() {
-    const activeNames = Object.keys(state.activePersonas);
+function renderTraitList() {
+    if (state.traits.length === 0) {
+        elements.traitList.innerHTML = `
+            <p class="trait-empty">No traits extracted. Create one to get started.</p>
+        `;
+        return;
+    }
     
-    if (activeNames.length === 0) {
+    elements.traitList.innerHTML = state.traits.map(trait => `
+        <div class="trait-card ${state.activeTraits[trait.name] !== undefined ? 'active' : ''}" 
+             data-name="${trait.name}">
+            <button class="trait-delete" data-name="${trait.name}" title="Delete trait">×</button>
+            <div class="trait-name">${trait.name}</div>
+            ${trait.opposite ? `<div class="trait-opposite">${trait.opposite}</div>` : ''}
+        </div>
+    `).join('');
+    
+    // Add click handlers for cards
+    elements.traitList.querySelectorAll('.trait-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (e.target.classList.contains('trait-delete')) return;
+            toggleTrait(card.dataset.name);
+        });
+    });
+    
+    // Add click handlers for delete buttons
+    elements.traitList.querySelectorAll('.trait-delete').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const name = btn.dataset.name;
+            if (confirm(`Delete trait "${name}"?`)) {
+                await deleteTrait(name);
+            }
+        });
+    });
+}
+
+function renderMixer() {
+    const activePersonaNames = Object.keys(state.activePersonas);
+    const activeTraitNames = Object.keys(state.activeTraits);
+    
+    if (activePersonaNames.length === 0 && activeTraitNames.length === 0) {
         elements.mixerSliders.innerHTML = `
-            <p class="mixer-empty">Click personas to add them to the mix</p>
+            <p class="mixer-empty">Click personas or traits to add them to the mix</p>
         `;
         elements.blendVisual.innerHTML = `
-            <div class="blend-empty">No personas selected</div>
+            <div class="blend-empty">No vectors selected</div>
         `;
         elements.blendStatus.textContent = 'None';
         return;
     }
     
-    // Render sliders with sign toggle
-    elements.mixerSliders.innerHTML = activeNames.map(name => {
-        const value = state.activePersonas[name];
-        const absValue = Math.abs(value);
-        const sign = value >= 0 ? '+' : '−';
-        const signClass = value >= 0 ? 'positive' : 'negative';
-        return `
-        <div class="slider-group" data-name="${name}">
-            <div class="slider-header">
-                <span class="slider-name">${name.replace(/_/g, ' ')}</span>
-                <button class="sign-toggle ${signClass}" data-name="${name}" title="Toggle push toward/away">${sign}</button>
-                <span class="slider-value">${absValue}%</span>
-                <button class="slider-remove" data-name="${name}">×</button>
-            </div>
-            <input type="range" min="0" max="300" value="${absValue}" 
-                   data-name="${name}" />
-        </div>
-    `}).join('');
+    let html = '';
     
-    // Add slider handlers
+    // Render persona sliders
+    if (activePersonaNames.length > 0) {
+        html += `<div class="mixer-section-label personas">Personas</div>`;
+        html += activePersonaNames.map(name => {
+            const value = state.activePersonas[name];
+            const absValue = Math.abs(value);
+            const sign = value >= 0 ? '+' : '−';
+            const signClass = value >= 0 ? 'positive' : 'negative';
+            return `
+            <div class="slider-group persona" data-name="${name}" data-type="persona">
+                <div class="slider-header">
+                    <span class="slider-name">${name.replace(/_/g, ' ')}</span>
+                    <button class="sign-toggle ${signClass}" data-name="${name}" data-type="persona" title="Toggle push toward/away">${sign}</button>
+                    <span class="slider-value">${absValue}%</span>
+                    <button class="slider-remove" data-name="${name}" data-type="persona">×</button>
+                </div>
+                <input type="range" min="0" max="300" value="${absValue}" 
+                       data-name="${name}" data-type="persona" />
+            </div>
+        `}).join('');
+    }
+    
+    // Render trait sliders
+    if (activeTraitNames.length > 0) {
+        html += `<div class="mixer-section-label traits">Traits</div>`;
+        html += activeTraitNames.map(name => {
+            const value = state.activeTraits[name];
+            const absValue = Math.abs(value);
+            const sign = value >= 0 ? '+' : '−';
+            const signClass = value >= 0 ? 'positive' : 'negative';
+            return `
+            <div class="slider-group trait" data-name="${name}" data-type="trait">
+                <div class="slider-header">
+                    <span class="slider-name">${name}</span>
+                    <button class="sign-toggle ${signClass}" data-name="${name}" data-type="trait" title="Toggle push toward/away">${sign}</button>
+                    <span class="slider-value">${absValue}%</span>
+                    <button class="slider-remove" data-name="${name}" data-type="trait">×</button>
+                </div>
+                <input type="range" min="0" max="300" value="${absValue}" 
+                       data-name="${name}" data-type="trait" />
+            </div>
+        `}).join('');
+    }
+    
+    elements.mixerSliders.innerHTML = html;
+    
+    // Add slider handlers for both personas and traits
     elements.mixerSliders.querySelectorAll('input[type="range"]').forEach(slider => {
         slider.addEventListener('input', (e) => {
             const name = e.target.dataset.name;
+            const type = e.target.dataset.type;
             const absValue = parseInt(e.target.value);
-            const currentSign = state.activePersonas[name] >= 0 ? 1 : -1;
-            state.activePersonas[name] = absValue * currentSign;
+            const stateObj = type === 'trait' ? state.activeTraits : state.activePersonas;
+            const currentSign = stateObj[name] >= 0 ? 1 : -1;
+            stateObj[name] = absValue * currentSign;
             e.target.parentElement.querySelector('.slider-value').textContent = `${absValue}%`;
             renderBlendVisual();
             updateBlendStatus();
@@ -383,9 +536,9 @@ function renderMixer() {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const name = btn.dataset.name;
-            // Flip the sign
-            state.activePersonas[name] = -state.activePersonas[name];
-            // Re-render to update toggle appearance
+            const type = btn.dataset.type;
+            const stateObj = type === 'trait' ? state.activeTraits : state.activePersonas;
+            stateObj[name] = -stateObj[name];
             renderMixer();
         });
     });
@@ -394,7 +547,13 @@ function renderMixer() {
     elements.mixerSliders.querySelectorAll('.slider-remove').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            removePersonaFromMix(btn.dataset.name);
+            const name = btn.dataset.name;
+            const type = btn.dataset.type;
+            if (type === 'trait') {
+                removeTraitFromMix(name);
+            } else {
+                removePersonaFromMix(name);
+            }
         });
     });
     
@@ -403,36 +562,53 @@ function renderMixer() {
 }
 
 function renderBlendVisual() {
-    const activeNames = Object.keys(state.activePersonas);
-    const hasActivePersonas = activeNames.some(name => state.activePersonas[name] !== 0);
+    const activePersonaNames = Object.keys(state.activePersonas);
+    const activeTraitNames = Object.keys(state.activeTraits);
+    const hasActivePersonas = activePersonaNames.some(name => state.activePersonas[name] !== 0);
+    const hasActiveTraits = activeTraitNames.some(name => state.activeTraits[name] !== 0);
     
-    if (!hasActivePersonas) {
+    if (!hasActivePersonas && !hasActiveTraits) {
         elements.blendVisual.innerHTML = `
             <div class="blend-empty">Adjust sliders to see blend</div>
         `;
         return;
     }
     
-    // Split into positive (push toward) and negative (push away)
-    const positiveNames = activeNames.filter(name => state.activePersonas[name] > 0);
-    const negativeNames = activeNames.filter(name => state.activePersonas[name] < 0);
+    // Combine all active vectors for visualization
+    const allPositive = [];
+    const allNegative = [];
+    
+    // Add personas
+    activePersonaNames.forEach(name => {
+        const val = state.activePersonas[name];
+        if (val > 0) allPositive.push({ name, val, type: 'persona' });
+        else if (val < 0) allNegative.push({ name, val: Math.abs(val), type: 'persona' });
+    });
+    
+    // Add traits
+    activeTraitNames.forEach(name => {
+        const val = state.activeTraits[name];
+        if (val > 0) allPositive.push({ name, val, type: 'trait' });
+        else if (val < 0) allNegative.push({ name, val: Math.abs(val), type: 'trait' });
+    });
     
     let html = '';
     
-    if (positiveNames.length > 0) {
-        const posTotal = positiveNames.reduce((sum, name) => sum + state.activePersonas[name], 0);
-        const posSegments = positiveNames.map(name => {
-            const percent = (state.activePersonas[name] / posTotal * 100).toFixed(0);
-            return `<div class="blend-segment positive" style="flex: ${state.activePersonas[name]}">${percent}%</div>`;
+    if (allPositive.length > 0) {
+        const posTotal = allPositive.reduce((sum, item) => sum + item.val, 0);
+        const posSegments = allPositive.map(item => {
+            const percent = (item.val / posTotal * 100).toFixed(0);
+            const colorClass = item.type === 'trait' ? 'style="background: var(--emerald-light)"' : '';
+            return `<div class="blend-segment positive" ${colorClass} style="flex: ${item.val}">${percent}%</div>`;
         }).join('');
         html += `<div class="blend-bar positive">${posSegments}</div>`;
     }
     
-    if (negativeNames.length > 0) {
-        const negTotal = negativeNames.reduce((sum, name) => sum + Math.abs(state.activePersonas[name]), 0);
-        const negSegments = negativeNames.map(name => {
-            const percent = (Math.abs(state.activePersonas[name]) / negTotal * 100).toFixed(0);
-            return `<div class="blend-segment negative" style="flex: ${Math.abs(state.activePersonas[name])}">${percent}%</div>`;
+    if (allNegative.length > 0) {
+        const negTotal = allNegative.reduce((sum, item) => sum + item.val, 0);
+        const negSegments = allNegative.map(item => {
+            const percent = (item.val / negTotal * 100).toFixed(0);
+            return `<div class="blend-segment negative" style="flex: ${item.val}">${percent}%</div>`;
         }).join('');
         html += `<div class="blend-label">Push away from:</div><div class="blend-bar negative">${negSegments}</div>`;
     }
@@ -441,26 +617,47 @@ function renderBlendVisual() {
 }
 
 function updateBlendStatus() {
-    const activeNames = Object.keys(state.activePersonas).filter(name => state.activePersonas[name] !== 0);
+    const activePersonaNames = Object.keys(state.activePersonas).filter(name => state.activePersonas[name] !== 0);
+    const activeTraitNames = Object.keys(state.activeTraits).filter(name => state.activeTraits[name] !== 0);
+    const totalActive = activePersonaNames.length + activeTraitNames.length;
     
-    if (activeNames.length === 0) {
+    if (totalActive === 0) {
         elements.blendStatus.textContent = 'None';
         return;
     }
     
-    // Show sign for single persona if negative
-    if (activeNames.length === 1) {
-        const name = activeNames[0];
-        const value = state.activePersonas[name];
-        const prefix = value < 0 ? '−' : '';
-        elements.blendStatus.textContent = prefix + name.replace(/_/g, ' ');
+    // Show single item if only one
+    if (totalActive === 1) {
+        if (activePersonaNames.length === 1) {
+            const name = activePersonaNames[0];
+            const value = state.activePersonas[name];
+            const prefix = value < 0 ? '−' : '';
+            elements.blendStatus.textContent = prefix + name.replace(/_/g, ' ');
+        } else {
+            const name = activeTraitNames[0];
+            const value = state.activeTraits[name];
+            const prefix = value < 0 ? '−' : '';
+            elements.blendStatus.textContent = prefix + name + ' (trait)';
+        }
     } else {
-        const posCount = activeNames.filter(name => state.activePersonas[name] > 0).length;
-        const negCount = activeNames.filter(name => state.activePersonas[name] < 0).length;
+        // Count positive and negative across both
+        let posCount = 0, negCount = 0;
+        activePersonaNames.forEach(name => {
+            if (state.activePersonas[name] > 0) posCount++;
+            else negCount++;
+        });
+        activeTraitNames.forEach(name => {
+            if (state.activeTraits[name] > 0) posCount++;
+            else negCount++;
+        });
+        
         if (negCount > 0 && posCount > 0) {
             elements.blendStatus.textContent = `${posCount}+ / ${negCount}−`;
         } else {
-            elements.blendStatus.textContent = `${activeNames.length} personas`;
+            const parts = [];
+            if (activePersonaNames.length > 0) parts.push(`${activePersonaNames.length}P`);
+            if (activeTraitNames.length > 0) parts.push(`${activeTraitNames.length}T`);
+            elements.blendStatus.textContent = parts.join(' + ');
         }
     }
 }
@@ -549,6 +746,23 @@ function removePersonaFromMix(name) {
     renderMixer();
 }
 
+function toggleTrait(name) {
+    if (state.activeTraits[name] !== undefined) {
+        delete state.activeTraits[name];
+    } else {
+        state.activeTraits[name] = 50;
+    }
+    
+    renderTraitList();
+    renderMixer();
+}
+
+function removeTraitFromMix(name) {
+    delete state.activeTraits[name];
+    renderTraitList();
+    renderMixer();
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MODAL
 // ═══════════════════════════════════════════════════════════════════════════
@@ -563,6 +777,83 @@ function showModal() {
 
 function hideModal() {
     elements.createModal.classList.remove('active');
+}
+
+function showTraitModal() {
+    elements.createTraitModal.classList.add('active');
+    elements.traitWord.value = '';
+    elements.traitOpposite.value = '';
+    elements.traitQuestions.value = '30';
+    elements.traitWord.focus();
+}
+
+function hideTraitModal() {
+    elements.createTraitModal.classList.remove('active');
+}
+
+async function handleCreateTrait() {
+    const word = elements.traitWord.value.trim().toLowerCase();
+    const opposite = elements.traitOpposite.value.trim().toLowerCase();
+    const numQuestions = parseInt(elements.traitQuestions.value) || 30;
+    const batchSize = parseInt(elements.traitBatch.value) || 8;
+    
+    if (!word) {
+        alert('Please enter a trait word');
+        return;
+    }
+    
+    hideTraitModal();
+    const oppositeText = opposite || 'auto-generated opposite';
+    showLoading(`Extracting trait "${word}" ↔ "${oppositeText}"...\nUsing ${numQuestions} questions with contrastive prompts`);
+    
+    try {
+        if (!state.modelLoaded) {
+            elements.loadingText.textContent = 'Loading model first...';
+            await loadModel();
+        }
+        
+        elements.loadingText.textContent = `Extracting "${word}" trait...\nThis uses positive/negative prompts for contrastive extraction.`;
+        
+        await createTrait(word, opposite || null, numQuestions, batchSize);
+        
+        // Poll for completion
+        const pollInterval = setInterval(async () => {
+            const status = await fetchStatus();
+            if (!status || !status.creating_trait) {
+                clearInterval(pollInterval);
+                state.creatingTrait = null;
+                hideLoading();
+                await fetchTraits();
+            }
+        }, 2000);
+        
+    } catch (error) {
+        state.creatingTrait = null;
+        hideLoading();
+        alert(`Failed to extract trait: ${error.message}`);
+    }
+}
+
+function switchTab(tabName) {
+    state.currentTab = tabName;
+    
+    // Update tab buttons
+    elements.subTabs.forEach(tab => {
+        if (tab.dataset.tab === tabName) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+    
+    // Update tab content
+    if (tabName === 'personas') {
+        elements.personasTab.classList.add('active');
+        elements.traitsTab.classList.remove('active');
+    } else {
+        elements.personasTab.classList.remove('active');
+        elements.traitsTab.classList.add('active');
+    }
 }
 
 async function handleCreatePersona() {
@@ -638,6 +929,16 @@ function setupEventListeners() {
     // Create persona button
     elements.createPersonaBtn.addEventListener('click', showModal);
     
+    // Create trait button
+    elements.createTraitBtn.addEventListener('click', showTraitModal);
+    
+    // Tab switching
+    elements.subTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            switchTab(tab.dataset.tab);
+        });
+    });
+    
     // New chat button
     elements.newChatBtn.addEventListener('click', clearChat);
     
@@ -651,10 +952,15 @@ function setupEventListeners() {
         setSteeringScale(newScale);
     });
     
-    // Modal buttons
+    // Persona modal buttons
     elements.modalCancel.addEventListener('click', hideModal);
     elements.modalCreate.addEventListener('click', handleCreatePersona);
     elements.createModal.querySelector('.modal-backdrop').addEventListener('click', hideModal);
+    
+    // Trait modal buttons
+    elements.traitModalCancel.addEventListener('click', hideTraitModal);
+    elements.traitModalCreate.addEventListener('click', handleCreateTrait);
+    elements.createTraitModal.querySelector('.modal-backdrop').addEventListener('click', hideTraitModal);
     
     // Chat input
     elements.chatInput.addEventListener('keydown', (e) => {
@@ -678,6 +984,7 @@ function setupEventListeners() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             hideModal();
+            hideTraitModal();
         }
     });
 }
@@ -726,6 +1033,7 @@ async function init() {
     // Fetch initial data
     await fetchStatus();
     await fetchPersonas();
+    await fetchTraits();
     
     // Connect WebSocket
     connectWebSocket();

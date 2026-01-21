@@ -33,15 +33,22 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Left Panel: Personas -->
+            <!-- Left Panel: Personas & Traits -->
             <aside class="panel personas-panel">
                 <div class="panel-header">
                     <div class="panel-decoration"></div>
-                    <h2>Personas</h2>
+                    <h2>Vectors</h2>
                     <div class="panel-decoration"></div>
                 </div>
                 
-                <div class="panel-content">
+                <!-- Sub-tabs -->
+                <div class="sub-tabs">
+                    <button class="sub-tab active" data-tab="personas">Personas</button>
+                    <button class="sub-tab" data-tab="traits">Traits</button>
+                </div>
+                
+                <!-- Personas Tab Content -->
+                <div class="panel-content tab-content active" id="personas-tab">
                     <div class="persona-list" id="persona-list">
                         <!-- Persona cards populated by JS -->
                     </div>
@@ -49,6 +56,19 @@
                     <button class="btn btn-primary" id="create-persona-btn">
                         <span class="btn-decoration"></span>
                         Create Persona
+                        <span class="btn-decoration"></span>
+                    </button>
+                </div>
+                
+                <!-- Traits Tab Content -->
+                <div class="panel-content tab-content" id="traits-tab">
+                    <div class="trait-list" id="trait-list">
+                        <!-- Trait cards populated by JS -->
+                    </div>
+                    
+                    <button class="btn btn-primary btn-trait" id="create-trait-btn">
+                        <span class="btn-decoration"></span>
+                        Extract Trait
                         <span class="btn-decoration"></span>
                     </button>
                 </div>
@@ -208,6 +228,63 @@
                 <button class="btn btn-primary" id="modal-create">
                     <span class="btn-decoration"></span>
                     Create
+                    <span class="btn-decoration"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Trait Modal -->
+    <div class="modal" id="create-trait-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-decoration"></div>
+                <h2>Extract Trait Vector</h2>
+                <div class="modal-decoration"></div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="trait-word">Trait Word</label>
+                    <input type="text" id="trait-word" placeholder="e.g., compliant, cooperative, defiant" />
+                    <span class="form-hint">A single word describing the trait to extract</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="trait-opposite">Opposite Trait (optional)</label>
+                    <input type="text" id="trait-opposite" placeholder="e.g., defiant, uncooperative, compliant" />
+                    <span class="form-hint">Auto-generated if left empty</span>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="trait-questions">Questions</label>
+                        <input type="number" id="trait-questions" value="30" min="10" max="100" />
+                        <span class="form-hint">Extraction questions</span>
+                    </div>
+                    <div class="form-group half">
+                        <label for="trait-batch">Batch Size</label>
+                        <input type="number" id="trait-batch" value="8" min="1" max="16" />
+                        <span class="form-hint">Higher = faster</span>
+                    </div>
+                </div>
+                
+                <div class="trait-info-box">
+                    <p>Traits are extracted using <strong>contrastive prompts</strong>:</p>
+                    <ul>
+                        <li>Positive: "Be [trait] in your responses"</li>
+                        <li>Negative: "Be [opposite] in your responses"</li>
+                    </ul>
+                    <p>The difference captures the trait direction.</p>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="trait-modal-cancel">Cancel</button>
+                <button class="btn btn-primary" id="trait-modal-create">
+                    <span class="btn-decoration"></span>
+                    Extract
                     <span class="btn-decoration"></span>
                 </button>
             </div>

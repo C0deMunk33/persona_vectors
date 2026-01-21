@@ -413,6 +413,204 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   SUB-TABS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.sub-tabs {
+    display: flex;
+    border-bottom: var(--border-thin);
+}
+
+.sub-tab {
+    flex: 1;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-tertiary);
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.sub-tab:first-child {
+    border-right: 1px solid var(--gold-muted);
+}
+
+.sub-tab:hover {
+    background: var(--bg-secondary);
+    color: var(--gold);
+}
+
+.sub-tab.active {
+    background: var(--bg-secondary);
+    color: var(--gold);
+}
+
+.sub-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gold);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TRAITS LIST & CARDS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.trait-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    flex: 1;
+    overflow-y: auto;
+}
+
+.trait-card {
+    padding: var(--space-md);
+    background: var(--bg-tertiary);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.trait-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: var(--emerald-light);
+    transition: height var(--transition-fast);
+}
+
+.trait-card:hover {
+    border-color: var(--emerald);
+}
+
+.trait-card:hover::before {
+    height: 60%;
+}
+
+.trait-card.active {
+    border-color: var(--emerald-light);
+    background: linear-gradient(90deg, rgba(42, 107, 86, 0.15) 0%, transparent 100%);
+}
+
+.trait-card.active::before {
+    height: 100%;
+}
+
+.trait-delete {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    opacity: 0;
+    transition: all var(--transition-fast);
+    z-index: 1;
+}
+
+.trait-card:hover .trait-delete {
+    opacity: 1;
+}
+
+.trait-delete:hover {
+    color: var(--ruby);
+    transform: scale(1.2);
+}
+
+.trait-name {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--emerald-light);
+    margin-bottom: var(--space-xs);
+}
+
+.trait-opposite {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.trait-opposite::before {
+    content: '↔';
+    color: var(--gold-muted);
+}
+
+.trait-empty {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.btn-trait {
+    background: linear-gradient(180deg, var(--emerald-light) 0%, var(--emerald) 100%) !important;
+    border-color: var(--emerald-light) !important;
+}
+
+.btn-trait:hover {
+    background: linear-gradient(180deg, var(--emerald) 0%, var(--emerald-light) 100%) !important;
+    box-shadow: 0 0 20px rgba(42, 107, 86, 0.3) !important;
+}
+
+/* Trait info box in modal */
+.trait-info-box {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--emerald);
+    padding: var(--space-md);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.trait-info-box p {
+    margin-bottom: var(--space-sm);
+}
+
+.trait-info-box p:last-child {
+    margin-bottom: 0;
+}
+
+.trait-info-box ul {
+    margin: var(--space-sm) 0;
+    padding-left: var(--space-lg);
+}
+
+.trait-info-box li {
+    margin-bottom: var(--space-xs);
+    color: var(--emerald-light);
+}
+
+.trait-info-box strong {
+    color: var(--gold);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    CHAT PANEL
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -910,6 +1108,48 @@ input[type="range"]::-moz-range-thumb {
 .blend-segment:nth-child(3) { background: var(--ruby); }
 .blend-segment:nth-child(4) { background: var(--cream); }
 .blend-segment:nth-child(5) { background: var(--gold-dark); }
+
+/* Trait-specific mixer styles */
+.slider-group.trait .slider-name {
+    color: var(--emerald-light);
+}
+
+.slider-group.trait .slider-value {
+    color: var(--emerald-light);
+}
+
+.slider-group.trait input[type="range"]::-webkit-slider-thumb {
+    background: var(--emerald-light);
+}
+
+.slider-group.trait input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--emerald);
+}
+
+.slider-group.trait .sign-toggle.positive {
+    color: var(--emerald-light);
+    border-color: var(--emerald);
+}
+
+/* Mixer section labels */
+.mixer-section-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-xs);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.mixer-section-label.personas {
+    color: var(--gold-muted);
+}
+
+.mixer-section-label.traits {
+    color: var(--emerald);
+    margin-top: var(--space-md);
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BUTTONS
