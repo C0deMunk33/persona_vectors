@@ -1,0 +1,19 @@
+torch>=2.0
+transformers>=4.40
+accelerate
+safetensors
+bitsandbytes
+pyyaml
+click
+rich
+prompt_toolkit
+jsonlines
+numpy
+fastapi
+uvicorn[standard]
+websockets
+pydantic>=2.0
+
+# Optional: for guaranteed structured JSON output (no parsing failures)
+# pip install outlines
+# outlines>=0.1.0

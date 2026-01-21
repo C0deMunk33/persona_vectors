@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persona Steering</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-decoration left"></div>
+            <h1 class="header-title">Persona Steering</h1>
+            <div class="header-decoration right"></div>
+        </header>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">Model</span>
+                <span class="status-value" id="model-status">Not Loaded</span>
+            </div>
+            <div class="status-divider"></div>
+            <div class="status-item">
+                <span class="status-label">Active Blend</span>
+                <span class="status-value" id="blend-status">None</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel: Personas -->
+            <aside class="panel personas-panel">
+                <div class="panel-header">
+                    <div class="panel-decoration"></div>
+                    <h2>Personas</h2>
+                    <div class="panel-decoration"></div>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="persona-list" id="persona-list">
+                        <!-- Persona cards populated by JS -->
+                    </div>
+                    
+                    <button class="btn btn-primary" id="create-persona-btn">
+                        <span class="btn-decoration"></span>
+                        Create Persona
+                        <span class="btn-decoration"></span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Center Panel: Chat -->
+            <section class="panel chat-panel">
+                <div class="panel-header">
+                    <div class="panel-decoration"></div>
+                    <h2>Conversation</h2>
+                    <div class="panel-decoration"></div>
+                    <button class="btn-new-chat" id="new-chat-btn" title="New Chat">+</button>
+                </div>
+                
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-welcome">
+                            <div class="welcome-decoration"></div>
+                            <p>Welcome to Persona Steering</p>
+                            <p class="welcome-sub">Select personas from the left panel, adjust the mix on the right, then start chatting.</p>
+                            <div class="welcome-decoration"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <div class="input-decoration left"></div>
+                        <textarea 
+                            id="chat-input" 
+                            placeholder="Enter your message..."
+                            rows="1"
+                        ></textarea>
+                        <button class="btn btn-send" id="send-btn" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"/>
+                            </svg>
+                        </button>
+                        <div class="input-decoration right"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Mixer -->
+            <aside class="panel mixer-panel">
+                <div class="panel-header">
+                    <div class="panel-decoration"></div>
+                    <h2>Mixer</h2>
+                    <div class="panel-decoration"></div>
+                </div>
+                
+                <div class="panel-content">
+                    <!-- Active Persona Sliders -->
+                    <div class="mixer-section">
+                        <h3 class="section-title">Active Personas</h3>
+                        <div class="mixer-sliders" id="mixer-sliders">
+                            <p class="mixer-empty">Click personas to add them to the mix</p>
+                        </div>
+                    </div>
+
+                    <div class="divider">
+                        <div class="divider-line"></div>
+                        <div class="divider-diamond"></div>
+                        <div class="divider-line"></div>
+                    </div>
+
+                    <!-- Blend Visualization -->
+                    <div class="mixer-section">
+                        <h3 class="section-title">Blend Preview</h3>
+                        <div class="blend-visual" id="blend-visual">
+                            <div class="blend-empty">No personas selected</div>
+                        </div>
+                    </div>
+
+                    <div class="divider">
+                        <div class="divider-line"></div>
+                        <div class="divider-diamond"></div>
+                        <div class="divider-line"></div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="mixer-section">
+                        <h3 class="section-title">Settings</h3>
+                        <div class="setting-row">
+                            <label class="setting-label">Steering Scale</label>
+                            <div class="number-stepper">
+                                <button class="stepper-btn" id="scale-down">−</button>
+                                <span class="stepper-value" id="steering-scale-value">0.1</span>
+                                <button class="stepper-btn" id="scale-up">+</button>
+                            </div>
+                        </div>
+                        <p class="setting-hint">Lower = subtle, Higher = stronger effect</p>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-decoration"></div>
+            <span>Persona Steering System</span>
+            <div class="footer-decoration"></div>
+        </footer>
+    </div>
+
+    <!-- Create Persona Modal -->
+    <div class="modal" id="create-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-decoration"></div>
+                <h2>Create New Persona</h2>
+                <div class="modal-decoration"></div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="persona-name">Persona Name</label>
+                    <input type="text" id="persona-name" placeholder="e.g., wise_sage" pattern="[a-z0-9_]+" />
+                    <span class="form-hint">Lowercase letters, numbers, and underscores only</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="persona-description">Character Description</label>
+                    <textarea id="persona-description" rows="4" placeholder="Describe the persona's personality, speaking style, values, and quirks..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="persona-prompts">Number of System Prompts</label>
+                    <input type="number" id="persona-prompts" value="5" min="2" max="10" />
+                    <span class="form-hint">Different variations of the persona (2-10)</span>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="persona-questions">Questions</label>
+                        <input type="number" id="persona-questions" value="40" min="10" max="100" />
+                        <span class="form-hint">Extraction questions per prompt</span>
+                    </div>
+                    <div class="form-group half">
+                        <label for="persona-batch">Batch Size</label>
+                        <input type="number" id="persona-batch" value="8" min="1" max="16" />
+                        <span class="form-hint">Higher = faster but more VRAM</span>
+                    </div>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="persona-use-judge" />
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-text">Use LLM Judge</span>
+                    </label>
+                    <span class="form-hint">Filter extractions by roleplay quality (slower but higher quality)</span>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+                <button class="btn btn-primary" id="modal-create">
+                    <span class="btn-decoration"></span>
+                    Create
+                    <span class="btn-decoration"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text" id="loading-text">Loading model...</p>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

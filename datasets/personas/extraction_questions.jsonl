@@ -1,0 +1,100 @@
+{"question": "Describe a situation where you had to make a difficult decision. How did you approach the problem-solving process?", "category": "problem_solving", "id": "q_001"}
+{"question": "What is something you value most in life, and why do you think it's important?", "category": "values", "id": "q_002"}
+{"question": "How do you typically generate new ideas or solve creative problems?", "category": "creativity", "id": "q_003"}
+{"question": "Explain a time when you had to navigate a complex social situation. What was your thought process?", "category": "social", "id": "q_004"}
+{"question": "Can you recall a moment when you had to think about a concept in a very abstract way? How did you handle it?", "category": "abstract_thinking", "id": "q_005"}
+{"question": "Tell me about a significant change in your life and how you dealt with it. How did this experience shape who you are today?", "category": "identity", "id": "q_006"}
+{"question": "Describe a scenario where you had to prioritize tasks. What factors influenced your decisions?", "category": "problem_solving", "id": "q_007"}
+{"question": "What are some things you believe in strongly, and what makes those beliefs meaningful to you?", "category": "values", "id": "q_008"}
+{"question": "How do you usually come up with solutions when faced with a challenge?", "category": "creativity", "id": "q_009"}
+{"question": "Discuss a situation where you had to deal with a difficult colleague or friend. How did you handle the interaction?", "category": "social", "id": "q_010"}
+{"question": "Can you remember a time when you had to think deeply about a philosophical or theoretical question? How did you approach it?", "category": "abstract_thinking", "id": "q_011"}
+{"question": "Share an experience from your past that significantly impacted your sense of self. How did this event change you?", "category": "identity", "id": "q_012"}
+{"question": "Describe a process you used to solve a complex problem recently. What steps did you take?", "category": "problem_solving", "id": "q_013"}
+{"question": "What are some core values that guide your daily actions and decisions?", "category": "values", "id": "q_014"}
+{"question": "How do you typically brainstorm and develop new ideas for projects or tasks?", "category": "creativity", "id": "q_015"}
+{"question": "Recall a situation where you had to manage interpersonal conflicts. How did you approach the situation?", "category": "social", "id": "q_016"}
+{"question": "Can you describe a time when you had to analyze a situation from multiple angles? How did you arrive at your conclusions?", "category": "abstract_thinking", "id": "q_017"}
+{"question": "Reflect on a significant period in your life when you faced a major transition. How did you cope with the change?", "category": "identity", "id": "q_018"}
+{"question": "Tell me about a time when you had to resolve a conflict or disagreement. How did you handle it?", "category": "social", "id": "q_019"}
+{"question": "Describe a scenario where you had to think critically about a complex issue. What was your approach?", "category": "abstract_thinking", "id": "q_020"}
+{"question": "Share an experience that changed your perspective on a particular issue or belief. How did this shift occur?", "category": "identity", "id": "q_021"}
+{"question": "Discuss a situation where you had to navigate a tricky social dilemma. How did you resolve it?", "category": "social", "id": "q_022"}
+{"question": "Can you explain a method you use to tackle challenging problems or obstacles?", "category": "problem_solving", "id": "q_023"}
+{"question": "What are some principles or beliefs that are crucial to your personal ethics?", "category": "values", "id": "q_024"}
+{"question": "How do you usually go about generating innovative ideas for projects or tasks?", "category": "creativity", "id": "q_025"}
+{"question": "Recall a situation where you had to mediate a dispute between two parties. How did you approach the mediation?", "category": "social", "id": "q_026"}
+{"question": "Can you describe a time when you had to consider the implications of a decision on a broad scale? How did you think through it?", "category": "abstract_thinking", "id": "q_027"}
+{"question": "Share an experience that profoundly affected your sense of self and personal growth. How did you grow from this experience?", "category": "identity", "id": "q_028"}
+{"question": "Tell me about a time when you had to handle a difficult conversation with someone. How did you approach the conversation?", "category": "social", "id": "q_029"}
+{"question": "Describe a process you used to solve a complex problem recently. What steps did you take?", "category": "problem_solving", "id": "q_030"}
+{"question": "What are some core values that guide your daily actions and decisions?", "category": "values", "id": "q_031"}
+{"question": "How do you typically brainstorm and develop new ideas for projects or tasks?", "category": "creativity", "id": "q_032"}
+{"question": "Recall a situation where you had to manage interpersonal conflicts. How did you handle the situation?", "category": "social", "id": "q_033"}
+{"question": "Can you describe a time when you had to analyze a situation from multiple angles? How did you arrive at your conclusions?", "category": "abstract_thinking", "id": "q_034"}
+{"question": "Reflect on a significant period in your life when you faced a major transition. How did you cope with the change?", "category": "identity", "id": "q_035"}
+{"question": "Tell me about a time when you had to resolve a conflict or disagreement. How did you handle it?", "category": "social", "id": "q_036"}
+{"question": "Describe a scenario where you had to think critically about a complex issue. What was your approach?", "category": "abstract_thinking", "id": "q_037"}
+{"question": "Share an experience that changed your perspective on a particular issue or belief. How did this shift occur?", "category": "identity", "id": "q_038"}
+{"question": "Discuss a situation where you had to navigate a tricky social dilemma. How did you resolve it?", "category": "social", "id": "q_039"}
+{"question": "Can you explain a method you use to tackle challenging problems or obstacles?", "category": "problem_solving", "id": "q_040"}
+{"question": "What are some principles or beliefs that are crucial to your personal ethics?", "category": "values", "id": "q_041"}
+{"question": "How do you usually go about generating innovative ideas for projects or tasks?", "category": "creativity", "id": "q_042"}
+{"question": "Recall a situation where you had to mediate a dispute between two parties. How did you approach the mediation?", "category": "social", "id": "q_043"}
+{"question": "Can you describe a time when you had to consider the implications of a decision on a broad scale? How did you think through it?", "category": "abstract_thinking", "id": "q_044"}
+{"question": "How do you typically approach a complex problem?", "category": "problem_solving", "id": "q_045"}
+{"question": "What are your top three values in life, and why?", "category": "values", "id": "q_046"}
+{"question": "Describe a time when you faced a creative challenge. How did you overcome it?", "category": "creativity", "id": "q_047"}
+{"question": "In a social situation, what are the two most important things you look for in others?", "category": "social", "id": "q_048"}
+{"question": "Explain a concept or idea from a completely abstract perspective.", "category": "abstract_thinking", "id": "q_049"}
+{"question": "How do you define your personal identity, and how does it evolve over time?", "category": "identity", "id": "q_050"}
+{"question": "What is your preferred learning environment, and why?", "category": "preferences", "id": "q_051"}
+{"question": "Can you recall a time when you had to make a difficult decision? What factors influenced your choice?", "category": "problem_solving", "id": "q_052"}
+{"question": "Describe a scenario where you felt deeply optimistic. What made you feel that way?", "category": "optimism", "id": "q_053"}
+{"question": "Tell me about a situation where you had to be cautious. What were the risks, and how did you manage them?", "category": "cautiousness", "id": "q_054"}
+{"question": "What role does poetry play in your life, and how has it influenced you?", "category": "creativity", "id": "q_055"}
+{"question": "How do you usually resolve conflicts with others?", "category": "social", "id": "q_056"}
+{"question": "Discuss a complex issue from multiple philosophical perspectives.", "category": "abstract_thinking", "id": "q_057"}
+{"question": "How has your identity been shaped by significant life events?", "category": "identity", "id": "q_058"}
+{"question": "What are your favorite hobbies or activities, and why do you enjoy them?", "category": "preferences", "id": "q_059"}
+{"question": "Recall a time when you successfully used a systematic approach to solve a problem. What was the outcome?", "category": "problem_solving", "id": "q_060"}
+{"question": "How do you maintain hope during challenging times?", "category": "optimism", "id": "q_061"}
+{"question": "What safety measures do you take in your daily life, and why are they important to you?", "category": "cautiousness", "id": "q_062"}
+{"question": "Describe a poem that resonated with you deeply. What aspects of the poem moved you?", "category": "creativity", "id": "q_063"}
+{"question": "How do you navigate social gatherings or networking events?", "category": "social", "id": "q_064"}
+{"question": "Discuss the implications of quantum mechanics on our understanding of the universe.", "category": "abstract_thinking", "id": "q_065"}
+{"question": "How have your life experiences contributed to your current sense of self?", "category": "identity", "id": "q_066"}
+{"question": "What are some of your favorite ways to relax and why?", "category": "preferences", "id": "q_067"}
+{"question": "Describe a time when you had to use logic and reasoning to solve a problem. What steps did you take?", "category": "problem_solving", "id": "q_068"}
+{"question": "How do you stay positive when facing obstacles?", "category": "optimism", "id": "q_069"}
+{"question": "What steps do you take to ensure your personal safety?", "category": "cautiousness", "id": "q_070"}
+{"question": "Discuss the symbolism and themes in a poem you admire. What messages does the poem convey?", "category": "creativity", "id": "q_071"}
+{"question": "How do you handle social interactions that make you uncomfortable?", "category": "social", "id": "q_072"}
+{"question": "Explain the concept of relativity in simple terms and its significance.", "category": "abstract_thinking", "id": "q_073"}
+{"question": "How have your past experiences influenced your current beliefs about yourself?", "category": "identity", "id": "q_074"}
+{"question": "What are your go-to methods for unwinding after a long day?", "category": "preferences", "id": "q_075"}
+{"question": "Describe a method you use to break down a complex problem into manageable parts.", "category": "problem_solving", "id": "q_076"}
+{"question": "How do you typically approach challenges with a pessimistic mindset?", "category": "optimism", "id": "q_077"}
+{"question": "What precautions do you take to protect yourself in unfamiliar environments?", "category": "cautiousness", "id": "q_078"}
+{"question": "Discuss the imagery and language in a poem you find particularly evocative. What emotions does it evoke?", "category": "creativity", "id": "q_079"}
+{"question": "How do you handle social situations where you need to be assertive?", "category": "social", "id": "q_080"}
+{"question": "Explain the theory of general relativity and its impact on modern physics.", "category": "abstract_thinking", "id": "q_081"}
+{"question": "How have your previous roles and responsibilities shaped your current sense of self?", "category": "identity", "id": "q_082"}
+{"question": "What are some strategies you use to decompress and recharge?", "category": "preferences", "id": "q_083"}
+{"question": "Describe a systematic process you use to tackle a difficult project.", "category": "problem_solving", "id": "q_084"}
+{"question": "How do you maintain optimism in the face of adversity?", "category": "optimism", "id": "q_085"}
+{"question": "What safety protocols do you follow in your daily routine?", "category": "cautiousness", "id": "q_086"}
+{"question": "Discuss the use of metaphors in a poem you like. How do they enhance the poem's meaning?", "category": "creativity", "id": "q_087"}
+{"question": "How do you navigate social dynamics in a group setting?", "category": "social", "id": "q_088"}
+{"question": "Explain the concept of black holes and their significance in astronomy.", "category": "abstract_thinking", "id": "q_089"}
+{"question": "How have your life experiences contributed to your current professional identity?", "category": "identity", "id": "q_090"}
+{"question": "What are some techniques you use to unwind and destress?", "category": "preferences", "id": "q_091"}
+{"question": "Describe a situation where you had to solve a complex problem. How did you approach it and what was the outcome?", "category": "problem_solving", "id": "q_092"}
+{"question": "What are your top three core values, and how do they influence your daily decisions?", "category": "values", "id": "q_093"}
+{"question": "Explain a creative project or idea you recently worked on. What inspired you and how did you bring it to life?", "category": "creativity", "id": "q_094"}
+{"question": "Tell me about a time when you had to navigate a difficult social situation. What was your strategy and how did it turn out?", "category": "social", "id": "q_095"}
+{"question": "How do you typically approach abstract concepts in your work or personal life? Can you give an example?", "category": "abstract_thinking", "id": "q_096"}
+{"question": "Reflect on a significant event in your life that shaped who you are today. What did you learn from it?", "category": "identity", "id": "q_097"}
+{"question": "If you could choose any career path, regardless of the financial prospects, what would it be and why?", "category": "preferences", "id": "q_098"}
+{"question": "Describe a time when you faced a challenge that required a positive outlook. How did you maintain optimism, and what was the result?", "category": "values", "id": "q_099"}
+{"question": "In a situation where you felt uncertain, how did you manage your caution and still take action?", "category": "preferences", "id": "q_100"}

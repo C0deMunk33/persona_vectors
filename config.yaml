@@ -1,0 +1,26 @@
+extraction:
+  batch_size: 8
+  max_new_tokens: 128
+  num_questions: 40
+  num_samples_per_prompt: 50
+  target_layers:
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  temperature: 0.7
+model:
+  device: cuda
+  dtype: float16
+  name: Qwen/Qwen3-4B
+  quantization: null
+paths:
+  datasets: ./datasets
+  vectors: ./vectors
+steering:
+  default_strength: 1.0
+  steering_scale: 0.1
