@@ -1,23 +1,23 @@
 extraction:
-  batch_size: 10
+  batch_size: 8
   max_new_tokens: 128
   num_questions: 40
   num_samples_per_prompt: 50
   target_layers:
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
   - 24
-  - 26
-  - 28
-  - 30
-  - 32
-  - 34
-  - 36
-  - 38
+  - 25
   temperature: 0.7
 model:
   device: cuda
   dtype: float16
-  name: huihui-ai/Huihui-Qwen3-14B-abliterated-v2
-  quantization: 4bit
+  name: Qwen/Qwen3-4B
+  quantization: null
 paths:
   datasets: ./datasets
   vectors: ./vectors
